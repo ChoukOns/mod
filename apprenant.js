@@ -47,7 +47,7 @@ const Sidebar = ({ option, setOption }) => {
         <FontAwesomeIcon icon={faQuestionCircle} /> {t('Quiz')}
       </div><br />
       <div className={option === 'achat' ? 'active' : ''} onClick={() => setOption('achat')}>
-      <FontAwesomeIcon icon={faShoppingCart} /> {t('Liste des achats')}
+        <FontAwesomeIcon icon={faQuestionCircle} /> {t('Liste des achats')}
       </div>
     </div>
   );
@@ -534,6 +534,49 @@ const [coursAchetes, setCoursAchetes] = useState([]);
   }, [option, user?.name]);
 
 
+
+
+  ///////////////////////////////////:traduction////////////
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[course.fichier]);
+  };
+  const handleTranslate = async (file, targetLanguage) => {
+    try {
+      if (!targetLanguage) {
+        console.error('Veuillez sélectionner une langue cible.');
+        return;
+      }
+  
+      if (!file) {
+        console.error('Aucun fichier sélectionné.');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('targetLanguage', targetLanguage);
+  
+      const response = await fetch('http://localhost:3001/translate-text-file', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        console.error('Erreur lors de la traduction du fichier.');
+        return;
+      }
+  
+      const data = await response.json();
+      console.log('Texte traduit :', data.translatedText);
+    } catch (error) {
+      console.error('Erreur lors de la traduction :', error);
+    }
+  };
+  
+  
+
   return (
     <div className="accueil-container">
       <Sidebar option={option} setOption={setOption} />
@@ -701,180 +744,66 @@ const [coursAchetes, setCoursAchetes] = useState([]);
     <FontAwesomeIcon icon={faShoppingCart} /></button>
   </div> &nbsp;&nbsp;
 
-                     {/*  <button className="btn-telecharger" data-toggle="tooltip" data-placement="top" title="" onClick={() => handleShowModal5()} style={{ fontSize: 50, backgroundColor: 'white', color: 'black' }}>
-                        <TranslateIcon />
-                      </button> */}
-                      
+  <button className="btn-telecharger" onClick={handleShowModal5} style={{ fontSize: 50, backgroundColor: 'white', color: 'black' }}>
+        <TranslateIcon />
+      </button>
 
 
 
 
-                      <Modal show={showModal5} onHide={handleCloseModal5}>
-                        <Modal.Header closeButton>
-                          <Modal.Title>Traduction de cours</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          {/* Utilisez l'état du score final pour afficher le score dans la modal */}
-                          <div className="mb-3">
-                            <label htmlFor="language" className="form-label">
-                              Langue du fichier
-                            </label>
-                            <select
-                              className="form-select"
-                              id="language"
-                              value={selectedOriginalLanguage}
-                              onChange={handleOriginalLanguageChange}
-                            >
-                              <option value="">Sélectionner une langue</option>
-                              <option value="">Sélectionner une langue</option>
-                              <option value="af">Afrikaans</option>
-                              <option value="ar">Arabic</option>
-                              <option value="hy">Armenian</option>
-                              <option value="as">Assamese</option>
-                              <option value="ay">Aymara</option>
-                              <option value="az">Azerbaijani</option>
-                              <option value="bm">Bambara</option>
-                              <option value="eu">Basque</option>
-                              <option value="be">Belarusian</option>
-                              <option value="bn">Bengali</option>
-                              <option value="bho">Bhojpuri</option>
-                              <option value="bs">Bosnian</option>
-                              <option value="bg">Bulgarian</option>
-                              <option value="ca">Catalan</option>
-                              <option value="ceb">Cebuano</option>
-                              <option value="ny">Chichewa</option>
-                              <option value="zh-CN">Chinese (Simplified)</option>
-                              <option value="zh-TW">Chinese (Traditional)</option>
-                              <option value="co">Corsican</option>
-                              <option value="hr">Croatian</option>
-                              <option value="cs">Czech</option>
-                              <option value="da">Danish</option>
-                              <option value="dv">Dhivehi</option>
-                              <option value="doi">Dogri</option>
-                              <option value="nl">Dutch</option>
-                              <option value="en">English</option>
-                              <option value="eo">Esperanto</option>
-                              <option value="et">Estonian</option>
-                              <option value="ee">Ewe</option>
-                              <option value="tl">Filipino</option>
-                              <option value="fi">Finnish</option>
-                              <option value="fr">French</option>
-                              <option value="fy">Frisian</option>
-                              <option value="gl">Galician</option>
-                              <option value="ka">Georgian</option>
-                              <option value="de">German</option>
-                              <option value="el">Greek</option>
-                              <option value="gn">Guarani</option>
-                              <option value="gu">Gujarati</option>
-                              <option value="ht">Haitian Creole</option>
-                              <option value="ha">Hausa</option>
-                              <option value="haw">Hawaiian</option>
-                              <option value="iw">Hebrew</option>
-                              <option value="hi">Hindi</option>
-                              <option value="hmn">Hmong</option>
-                              <option value="hu">Hungarian</option>
-                              <option value="is">Icelandic</option>
-                              <option value="ig">Igbo</option>
-                              <option value="ilo">Ilocano</option>
-                              <option value="id">Indonesian</option>
-                              <option value="ga">Irish</option>
-                              <option value="it">Italian</option>
-                              <option value="ja">Japanese</option>
-                              <option value="jw">Javanese</option>
-                              <option value="kn">Kannada</option>
-                              <option value="kk">Kazakh</option>
-                              <option value="km">Khmer</option>
-                              <option value="rw">Kinyarwanda</option>
-                              <option value="gom">Konkani</option>
-                              <option value="ko">Korean</option>
-                              <option value="kri">Krio</option>
-                              <option value="ku">Kurdish (Kurmanji)</option>
-                              <option value="ckb">Kurdish (Sorani)</option>
-                              <option value="ky">Kyrgyz</option>
-                              <option value="lo">Lao</option>
-                              <option value="la">Latin</option>
-                              <option value="lv">Latvian</option>
-                              <option value="ln">Lingala</option>
-                              <option value="lt">Lithuanian</option>
-                              <option value="lg">Luganda</option>
-                              <option value="lb">Luxembourgish</option>
-                              <option value="mk">Macedonian</option>
-                              <option value="mai">Maithili</option>
-                              <option value="mg">Malagasy</option>
-                              <option value="ms">Malay</option>
-                              <option value="ml">Malayalam</option>
-                              <option value="mt">Maltese</option>
-                              <option value="mi">Maori</option>
-                              <option value="mr">Marathi</option>
-                              <option value="mni-Mtei">Meiteilon (Manipuri)</option>
-                              <option value="lus">Mizo</option>
-                              <option value="mn">Mongolian</option>
-                              <option value="my">Myanmar</option>
-                              <option value="ne">Nepali</option>
-                              <option value="no">Norwegian</option>
-                              <option value="or">Odia (Oriya)</option>
-                              <option value="om">Oromo</option>
-                              <option value="ps">Pashto</option>
-                              <option value="fa">Persian</option>
-                              <option value="pl">Polish</option>
-                              <option value="pt">Portuguese</option>
-                              <option value="pa">Punjabi</option>
-                              <option value="qu">Quechua</option>
-                              <option value="ro">Romanian</option>
-                              <option value="ru">Russian</option>
-                              <option value="sm">Samoan</option>
-                              <option value="sa">Sanskrit</option>
-                              <option value="gd">Scots Gaelic</option>
-                              <option value="nso">Sepedi</option>
-                              <option value="sr">Serbian</option>
-                              <option value="st">Sesotho</option>
-                              <option value="sn">Shona</option>
-                              <option value="sd">Sindhi</option>
-                              <option value="si">Sinhala</option>
-                              <option value="sk">Slovak</option>
-                              <option value="sl">Slovenian</option>
-                              <option value="so">Somali</option>
-                              <option value="es">Spanish</option>
-                              <option value="su">Sundanese</option>
-                              <option value="sw">Swahili</option>
-                              <option value="sv">Swedish</option>
-                              <option value="tg">Tajik</option>
-                              <option value="ta">Tamil</option>
-                              <option value="tt">Tatar</option>
-                              <option value="te">Telugu</option>
-                              <option value="th">Thai</option>
-                              <option value="ti">Tigrinya</option>
-                              <option value="ts">Tsonga</option>
-                              <option value="tr">Turkish</option>
-                              <option value="tk">Turkmen</option>
-                              <option value="ak">Twi</option>
-                              <option value="uk">Ukrainian</option>
-                              <option value="ur">Urdu</option>
-                              <option value="ug">Uyghur</option>
-                              <option value="uz">Uzbek</option>
-                              <option value="vi">Vietnamese</option>
-                              <option value="cy">Welsh</option>
-                              <option value="xh">Xhosa</option>
-                              <option value="yi">Yiddish</option>
-                              <option value="yo">Yoruba</option>
-                              <option value="zu">Zulu</option>
-                            </select>
-                          </div>
-
-                          <div className="btn-translate">
-                            <button style={{ fontSize: 30, backgroundColor: 'white', color: 'black' }}>
-                              <TranslateIcon />
-                            </button></div>
-                          <div className="lien">
-                            <a href="">Voir le cours</a>
-                          </div>
-
-                          <div className="btn-download"><button data-toggle="tooltip" data-placement="top" title="Télécharger" style={{ fontSize: 30, backgroundColor: 'white', color: 'black' }}>
+    
+      <Modal show={showModal5} onHide={handleCloseModal5}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Traduction de cours</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="mb-3">
+                          <label htmlFor="language" className="form-label">Langue du fichier</label>
+                          <select
+                            className="form-select"
+                            id="language"
+                            value={selectedOriginalLanguage}
+                            onChange={handleOriginalLanguageChange}
+                          >
+                            <option value="">Sélectionner une langue</option>
+                            {/* Ajouter d'autres options ici */}
+                            <option value="af">Afrikaans</option>
+                            <option value="ar">Arabic</option>
+                            {/* ... */}
+                          </select>
+                        </div>
+                        <div className="mb-3">
+      <label htmlFor="fileInput" className="form-label">Télécharger un fichier</label>
+      <input
+        type="file"
+        className="form-control"
+        id="fileInput"
+        onChange={handleFileChange}
+      />
+    </div>
+                        <div className="btn-translate">
+                          <button
+                            style={{ fontSize: 30, backgroundColor: 'white', color: 'black' }}
+                            onClick={() => handleTranslate(file, selectedOriginalLanguage)}
+                          >
+                            <TranslateIcon />
+                          </button>
+                        </div>
+                        <div className="lien">
+                          <a href="">Voir le cours</a>
+                        </div>
+                        <div className="btn-download">
+                          <button
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Télécharger"
+                            style={{ fontSize: 30, backgroundColor: 'white', color: 'black' }}
+                          >
                             <FontAwesomeIcon icon={faDownload} />
                           </button>
-                          </div>
-                        </Modal.Body>
-                      </Modal>
+                        </div>
+                      </Modal.Body>
+                    </Modal>
 
 
 
